@@ -26,6 +26,13 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix=f"/api/{settings.API_VERSION}")
 
+# Import other routers
+try:
+    from app.api import institutions
+    app.include_router(institutions.router, prefix=f"/api/{settings.API_VERSION}")
+except ImportError:
+    pass  # Institutions router not yet available
+
 
 @app.get("/")
 def root():
