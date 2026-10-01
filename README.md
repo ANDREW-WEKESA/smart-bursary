@@ -13,17 +13,35 @@ SmartBursary is a digital bursary management system that simplifies the process 
   - Document upload and management
   - Real-time application status tracking
   - Email notifications
+  - Academic progress tracking
+  - Parent/guardian information management
+  - Payment disbursement status tracking
 
 - **For Administrators:**
   - Centralized application management dashboard
   - AI-assisted application analysis
   - Duplicate detection
   - Comprehensive reporting
+  - **Institution verification system**
+  - **Academic progress monitoring**
+  - **Payment disbursement tracking**
+  - Guardian information verification
 
 - **For Reviewers:**
   - Streamlined review workflow
   - Document verification tools
   - Scoring and recommendation system
+  - Institution enrollment verification
+  - Academic performance review
+
+## 🌟 Enhanced Features (HELB-Inspired)
+
+1. **🏛️ Institution Verification**: Verified registry of accredited institutions with verification workflow
+2. **📊 Academic Progress Tracking**: Semester-by-semester GPA/CGPA tracking with institution verification
+3. **👨‍👩‍👧‍👦 Parent/Guardian Information**: Comprehensive family financial assessment
+4. **💰 Payment Disbursement Tracking**: Complete payment lifecycle from approval to completion
+
+See [ENHANCED_FEATURES.md](ENHANCED_FEATURES.md) for detailed documentation.
 
 ## Technology Stack
 
