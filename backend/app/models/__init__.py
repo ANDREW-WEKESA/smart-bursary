@@ -6,6 +6,7 @@ from app.models.academic_progress import AcademicProgress, Semester, AcademicSta
 from app.models.bursary import Bursary, BursaryStatus
 from app.models.application import Application, ApplicationStatus
 from app.models.disbursement import Disbursement, DisbursementMethod, DisbursementStatus
+from app.models.document import Document
 
 __all__ = [
     "User",
@@ -27,4 +28,5 @@ __all__ = [
     "Disbursement",
     "DisbursementMethod",
     "DisbursementStatus",
+    "Document",
 ]
