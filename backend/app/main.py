@@ -28,13 +28,23 @@ app.include_router(auth.router, prefix=f"/api/{settings.API_VERSION}")
 
 # Import and register all API routers
 try:
-    from app.api import institutions, applicants, guardians, academic_progress, bursaries
+    from app.api import (
+        institutions,
+        applicants,
+        guardians,
+        academic_progress,
+        bursaries,
+        applications,
+        disbursements
+    )
     
     app.include_router(institutions.router, prefix=f"/api/{settings.API_VERSION}")
     app.include_router(applicants.router, prefix=f"/api/{settings.API_VERSION}")
     app.include_router(guardians.router, prefix=f"/api/{settings.API_VERSION}")
     app.include_router(academic_progress.router, prefix=f"/api/{settings.API_VERSION}")
     app.include_router(bursaries.router, prefix=f"/api/{settings.API_VERSION}")
+    app.include_router(applications.router, prefix=f"/api/{settings.API_VERSION}")
+    app.include_router(disbursements.router, prefix=f"/api/{settings.API_VERSION}")
 except ImportError as e:
     print(f"Warning: Some routers could not be imported: {e}")
 
