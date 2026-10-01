@@ -29,3 +29,8 @@ class User(Base):
     
     def __repr__(self):
         return f"<User {self.email}>"
+    
+    @property
+    def is_admin(self) -> bool:
+        """Check if user is an administrator."""
+        return self.role in [UserRole.ADMINISTRATOR, UserRole.SYSTEM_ADMIN]

@@ -8,6 +8,7 @@ from app.core.security import verify_password, get_password_hash, create_access_
 from app.core.config import settings
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse, Token, TokenData
+from app.core.permissions import get_user_permissions
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -37,7 +38,7 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     
-    if not user.is_active:
+    if user.is_active == 0:
         raise HTTPException(status_code=400, detail="Inactive user")
     
     return user
@@ -86,13 +87,13 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    if not user.is_active:
+    if user.is_active == 0:
         raise HTTPException(status_code=400, detail="Inactive user")
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.id, "email": user.email, "role": user.role.value},
+        data={"sub": str(user.id), "email": user.email, "role": user.role.value},
         expires_delta=access_token_expires
     )
     
@@ -103,3 +104,9 @@ def login(
 async def get_me(current_user: User = Depends(get_current_user)):
     """Get current user information."""
     return current_user
+
+
+@router.get("/me/permissions")
+async def get_my_permissions(current_user: User = Depends(get_current_user)):
+    """Get current user's permissions based on their role."""
+    return get_user_permissions(current_user)
