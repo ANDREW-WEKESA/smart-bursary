@@ -14,7 +14,7 @@ class Guardian(Base):
     # Guardian Information
     full_name = Column(String(255), nullable=False)
     id_number = Column(String(50), nullable=True)
-    relationship = Column(String(100), nullable=False)  # Father, Mother, Guardian, etc.
+    guardian_relationship = Column(String(100), nullable=False)  # Father, Mother, Guardian, etc.
     phone = Column(String(20), nullable=True)
     email = Column(String(255), nullable=True)
     
@@ -39,4 +39,4 @@ class Guardian(Base):
     applicant = relationship("Applicant", back_populates="guardians")
     
     def __repr__(self):
-        return f"<Guardian {self.full_name} - {self.relationship}>"
+        return f"<Guardian {self.full_name} - {self.guardian_relationship}>"
