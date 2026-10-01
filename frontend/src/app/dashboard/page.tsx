@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import ApplicantDashboard from '@/components/dashboards/ApplicantDashboard';
 import AdministratorDashboard from '@/components/dashboards/AdministratorDashboard';
+import ReviewerDashboard from '@/components/dashboards/ReviewerDashboard';
 
 interface User {
   id: number;
@@ -81,11 +82,11 @@ export default function DashboardPage() {
       case 'applicant':
         return <ApplicantDashboard user={user} />;
       case 'reviewer':
-        return <div className="text-center py-12">Reviewer dashboard coming soon...</div>;
+        return <ReviewerDashboard user={user} />;
       case 'finance_officer':
-        return <div className="text-center py-12">Finance Officer dashboard coming soon...</div>;
+        return <div className="text-center py-12 text-gray-600">Finance Officer dashboard coming soon...</div>;
       case 'institution_officer':
-        return <div className="text-center py-12">Institution Officer dashboard coming soon...</div>;
+        return <div className="text-center py-12 text-gray-600">Institution Officer dashboard coming soon...</div>;
       default:
         return <ApplicantDashboard user={user} />;
     }

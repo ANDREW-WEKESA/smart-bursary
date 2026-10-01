@@ -8,7 +8,9 @@ from app.core.database import Base
 class UserRole(str, enum.Enum):
     """User roles in the system."""
     APPLICANT = "applicant"
+    INSTITUTION_OFFICER = "institution_officer"
     REVIEWER = "reviewer"
+    FINANCE_OFFICER = "finance_officer"
     ADMINISTRATOR = "administrator"
     SYSTEM_ADMIN = "system_admin"
 
