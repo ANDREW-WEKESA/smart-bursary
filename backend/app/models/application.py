@@ -73,6 +73,7 @@ class Application(Base):
     bursary = relationship("Bursary", backref="applications")
     reviewer = relationship("User", foreign_keys=[assigned_reviewer_id], backref="assigned_applications")
     decision_maker = relationship("User", foreign_keys=[decision_made_by], backref="decided_applications")
+    documents = relationship("Document", back_populates="application", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Application {self.application_number}>"

@@ -35,7 +35,8 @@ try:
         academic_progress,
         bursaries,
         applications,
-        disbursements
+        disbursements,
+        documents
     )
     
     app.include_router(institutions.router, prefix=f"/api/{settings.API_VERSION}")
@@ -45,6 +46,7 @@ try:
     app.include_router(bursaries.router, prefix=f"/api/{settings.API_VERSION}")
     app.include_router(applications.router, prefix=f"/api/{settings.API_VERSION}")
     app.include_router(disbursements.router, prefix=f"/api/{settings.API_VERSION}")
+    app.include_router(documents.router, prefix=f"/api/{settings.API_VERSION}")
 except ImportError as e:
     print(f"Warning: Some routers could not be imported: {e}")
 
