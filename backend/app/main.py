@@ -26,12 +26,17 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix=f"/api/{settings.API_VERSION}")
 
-# Import other routers
+# Import and register all API routers
 try:
-    from app.api import institutions
+    from app.api import institutions, applicants, guardians, academic_progress, bursaries
+    
     app.include_router(institutions.router, prefix=f"/api/{settings.API_VERSION}")
-except ImportError:
-    pass  # Institutions router not yet available
+    app.include_router(applicants.router, prefix=f"/api/{settings.API_VERSION}")
+    app.include_router(guardians.router, prefix=f"/api/{settings.API_VERSION}")
+    app.include_router(academic_progress.router, prefix=f"/api/{settings.API_VERSION}")
+    app.include_router(bursaries.router, prefix=f"/api/{settings.API_VERSION}")
+except ImportError as e:
+    print(f"Warning: Some routers could not be imported: {e}")
 
 
 @app.get("/")
