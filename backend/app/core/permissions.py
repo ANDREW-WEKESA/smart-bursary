@@ -5,7 +5,6 @@ from typing import List
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from app.models.user import User, UserRole
-from app.api.auth import get_current_user
 
 
 class PermissionChecker:
@@ -14,13 +13,19 @@ class PermissionChecker:
     def __init__(self, allowed_roles: List[UserRole]):
         self.allowed_roles = allowed_roles
     
-    def __call__(self, current_user: User = Depends(get_current_user)) -> User:
+    def __call__(self, current_user: User = Depends(lambda: get_current_user_dependency())) -> User:
         if current_user.role not in self.allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Access denied. Required roles: {[role.value for role in self.allowed_roles]}"
             )
         return current_user
+
+
+def get_current_user_dependency():
+    """Dependency function to avoid circular import"""
+    from app.api.auth import get_current_user
+    return get_current_user
 
 
 # Permission decorators for common role combinations
