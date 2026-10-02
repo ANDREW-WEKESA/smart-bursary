@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import { getCounties, getSubCounties, getWards } from '@/data/kenyaLocations';
+import { getCounties, getConstituencies, getSubCounty, getWards } from '@/data/kenyaLocations';
 
 interface User {
   id: number;
@@ -20,6 +20,7 @@ interface ApplicantProfile {
   date_of_birth: string;
   gender: string;
   county: string;
+  constituency: string;
   sub_county: string;
   ward: string;
   address: string;
@@ -49,6 +50,7 @@ export default function ProfilePage() {
 
   // Location data
   const [counties, setCounties] = useState<string[]>([]);
+  const [constituencies, setConstituencies] = useState<string[]>([]);
   const [subCounties, setSubCounties] = useState<string[]>([]);
   const [wards, setWards] = useState<string[]>([]);
 
@@ -66,6 +68,7 @@ export default function ProfilePage() {
     date_of_birth: '',
     gender: '',
     county: '',
+    constituency: '',
     sub_county: '',
     ward: '',
     address: '',
@@ -103,13 +106,18 @@ export default function ProfilePage() {
           if (applicantResponse.data) {
             setPersonalInfo(applicantResponse.data);
 
-            // Load sub-counties and wards if county and sub-county exist
+            // Load constituencies, sub-counties and wards if county exists
             if (applicantResponse.data.county) {
-              const subs = getSubCounties(applicantResponse.data.county);
-              setSubCounties(subs);
+              const constits = getConstituencies(applicantResponse.data.county);
+              setConstituencies(constits);
               
-              if (applicantResponse.data.sub_county) {
-                const wardsData = getWards(applicantResponse.data.county, applicantResponse.data.sub_county);
+              if (applicantResponse.data.constituency) {
+                // Get sub-county for this constituency
+                const subCounty = getSubCounty(applicantResponse.data.county, applicantResponse.data.constituency);
+                setSubCounties([subCounty]);
+                
+                // Load wards
+                const wardsData = getWards(applicantResponse.data.county, applicantResponse.data.constituency);
                 setWards(wardsData);
               }
             }
@@ -148,21 +156,26 @@ export default function ProfilePage() {
 
     // Handle cascading dropdowns
     if (name === 'county') {
-      const subs = getSubCounties(value);
-      setSubCounties(subs);
+      const constits = getConstituencies(value);
+      setConstituencies(constits);
+      setSubCounties([]);
       setWards([]);
       setPersonalInfo(prev => ({
         ...prev,
         county: value,
+        constituency: '',
         sub_county: '',
         ward: ''
       }));
-    } else if (name === 'sub_county') {
+    } else if (name === 'constituency') {
+      const subCounty = getSubCounty(personalInfo.county, value);
+      setSubCounties([subCounty]);
       const wardsData = getWards(personalInfo.county, value);
       setWards(wardsData);
       setPersonalInfo(prev => ({
         ...prev,
-        sub_county: value,
+        constituency: value,
+        sub_county: subCounty,
         ward: ''
       }));
     }
@@ -280,6 +293,7 @@ export default function ProfilePage() {
     if (personalInfo.date_of_birth) completed++;
     if (personalInfo.gender) completed++;
     if (personalInfo.county) completed++;
+    if (personalInfo.constituency) completed++;
     if (personalInfo.sub_county) completed++;
     if (personalInfo.ward) completed++;
     if (personalInfo.address) completed++;
@@ -456,20 +470,34 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sub-County <span className="text-red-500">*</span>
+                    Constituency <span className="text-red-500">*</span>
                   </label>
                   <select
-                    name="sub_county"
-                    value={personalInfo.sub_county}
+                    name="constituency"
+                    value={personalInfo.constituency}
                     onChange={handlePersonalInfoChange}
                     disabled={!personalInfo.county}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                   >
-                    <option value="">Select Sub-County</option>
-                    {subCounties.map(subCounty => (
-                      <option key={subCounty} value={subCounty}>{subCounty}</option>
+                    <option value="">Select Constituency</option>
+                    {constituencies.map(constituency => (
+                      <option key={constituency} value={constituency}>{constituency}</option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sub-County <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="sub_county"
+                    value={personalInfo.sub_county}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                    placeholder="Auto-filled based on constituency"
+                  />
                 </div>
 
                 <div>
@@ -480,7 +508,7 @@ export default function ProfilePage() {
                     name="ward"
                     value={personalInfo.ward}
                     onChange={handlePersonalInfoChange}
-                    disabled={!personalInfo.sub_county}
+                    disabled={!personalInfo.constituency}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
                   >
                     <option value="">Select Ward</option>

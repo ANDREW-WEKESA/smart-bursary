@@ -36,7 +36,9 @@ class Applicant(Base):
     gender = Column(String(20), nullable=True)
     nationality = Column(String(100), nullable=True)
     county = Column(String(100), nullable=True)
+    constituency = Column(String(100), nullable=True)
     sub_county = Column(String(100), nullable=True)
+    ward = Column(String(100), nullable=True)
     address = Column(Text, nullable=True)
     
     # Educational Information

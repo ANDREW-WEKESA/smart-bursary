@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+pfrom pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from datetime import date
 from enum import Enum
@@ -28,6 +28,7 @@ class ApplicantBase(BaseModel):
     phone_number: str = Field(..., min_length=10, max_length=15)
     email: EmailStr
     county: str = Field(..., min_length=1, max_length=100)
+    constituency: str = Field(..., min_length=1, max_length=100)
     sub_county: str = Field(..., min_length=1, max_length=100)
     ward: str = Field(..., min_length=1, max_length=100)
     village: str = Field(..., min_length=1, max_length=100)
@@ -50,6 +51,7 @@ class ApplicantUpdate(BaseModel):
     phone_number: Optional[str] = Field(None, min_length=10, max_length=15)
     email: Optional[EmailStr] = None
     county: Optional[str] = Field(None, min_length=1, max_length=100)
+    constituency: Optional[str] = Field(None, min_length=1, max_length=100)
     sub_county: Optional[str] = Field(None, min_length=1, max_length=100)
     ward: Optional[str] = Field(None, min_length=1, max_length=100)
     village: Optional[str] = Field(None, min_length=1, max_length=100)
