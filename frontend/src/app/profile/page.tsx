@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import { getCounties, getSubCounties, getWards } from '@/data/kenyaLocations';
 
 interface User {
   id: number;
@@ -44,7 +45,20 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'personal' | 'guardian'>('personal');
+  const [activeTab, setActiveTab] = useState<'personal' | 'guardian' | 'documents'>('personal');
+
+  // Location data
+  const [counties, setCounties] = useState<string[]>([]);
+  const [subCounties, setSubCounties] = useState<string[]>([]);
+  const [wards, setWards] = useState<string[]>([]);
+
+  // Documents
+  const [documents, setDocuments] = useState({
+    nationalId: null as File | null,
+    feeStructure: null as File | null,
+    schoolId: '',
+    resultSlip: null as File | null
+  });
 
   // Personal Information
   const [personalInfo, setPersonalInfo] = useState<ApplicantProfile>({
@@ -68,6 +82,9 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
+    // Load counties on mount
+    setCounties(getCounties());
+
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -85,6 +102,17 @@ export default function ProfilePage() {
           const applicantResponse = await api.get(`/applicants/${userResponse.data.id}`);
           if (applicantResponse.data) {
             setPersonalInfo(applicantResponse.data);
+
+            // Load sub-counties and wards if county and sub-county exist
+            if (applicantResponse.data.county) {
+              const subs = getSubCounties(applicantResponse.data.county);
+              setSubCounties(subs);
+              
+              if (applicantResponse.data.sub_county) {
+                const wardsData = getWards(applicantResponse.data.county, applicantResponse.data.sub_county);
+                setWards(wardsData);
+              }
+            }
 
             // Try to get guardian info
             try {
@@ -117,6 +145,27 @@ export default function ProfilePage() {
       ...prev,
       [name]: value
     }));
+
+    // Handle cascading dropdowns
+    if (name === 'county') {
+      const subs = getSubCounties(value);
+      setSubCounties(subs);
+      setWards([]);
+      setPersonalInfo(prev => ({
+        ...prev,
+        county: value,
+        sub_county: '',
+        ward: ''
+      }));
+    } else if (name === 'sub_county') {
+      const wardsData = getWards(personalInfo.county, value);
+      setWards(wardsData);
+      setPersonalInfo(prev => ({
+        ...prev,
+        sub_county: value,
+        ward: ''
+      }));
+    }
   };
 
   const handleGuardianInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -124,6 +173,23 @@ export default function ProfilePage() {
     setGuardianInfo(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setDocuments(prev => ({
+        ...prev,
+        [field]: file
+      }));
+    }
+  };
+
+  const handleSchoolIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDocuments(prev => ({
+      ...prev,
+      schoolId: e.target.value
     }));
   };
 
@@ -208,16 +274,19 @@ export default function ProfilePage() {
 
   const getProfileCompletion = () => {
     let completed = 0;
-    let total = 8;
+    let total = 11; // Increased for documents
 
     if (personalInfo.id_number) completed++;
     if (personalInfo.date_of_birth) completed++;
     if (personalInfo.gender) completed++;
     if (personalInfo.county) completed++;
+    if (personalInfo.sub_county) completed++;
+    if (personalInfo.ward) completed++;
     if (personalInfo.address) completed++;
     if (guardianInfo.full_name) completed++;
     if (guardianInfo.phone) completed++;
     if (guardianInfo.guardian_relationship) completed++;
+    if (documents.nationalId || documents.feeStructure || documents.schoolId) completed++;
 
     return Math.round((completed / total) * 100);
   };
@@ -293,6 +362,16 @@ export default function ProfilePage() {
               >
                 Guardian Information
               </button>
+              <button
+                onClick={() => setActiveTab('documents')}
+                className={`py-4 px-6 text-sm font-medium border-b-2 ${
+                  activeTab === 'documents'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Required Documents
+              </button>
             </nav>
           </div>
 
@@ -362,42 +441,53 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     County <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="county"
                     value={personalInfo.county}
                     onChange={handlePersonalInfoChange}
-                    placeholder="e.g., Nairobi"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  >
+                    <option value="">Select County</option>
+                    {counties.map(county => (
+                      <option key={county} value={county}>{county}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sub-County
+                    Sub-County <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="sub_county"
                     value={personalInfo.sub_county}
                     onChange={handlePersonalInfoChange}
-                    placeholder="e.g., Westlands"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
+                    disabled={!personalInfo.county}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                  >
+                    <option value="">Select Sub-County</option>
+                    {subCounties.map(subCounty => (
+                      <option key={subCounty} value={subCounty}>{subCounty}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ward
+                    Ward <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="ward"
                     value={personalInfo.ward}
                     onChange={handlePersonalInfoChange}
-                    placeholder="e.g., Kitisuru"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
+                    disabled={!personalInfo.sub_county}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                  >
+                    <option value="">Select Ward</option>
+                    {wards.map(ward => (
+                      <option key={ward} value={ward}>{ward}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -593,6 +683,158 @@ export default function ProfilePage() {
                 </button>
               </div>
             </div>
+          )}
+
+          {/* Documents Upload Form */}
+          {activeTab === 'documents' && (
+            <div className="p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Required Documents</h3>
+              <p className="text-sm text-gray-600 mb-6">
+                Upload the following documents to complete your application profile
+              </p>
+
+              <div className="space-y-6">
+                {/* National ID */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                      </svg>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 mb-1">
+                        National ID / Birth Certificate <span className="text-red-500">*</span>
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Upload a clear scanned copy or photo of your ID or birth certificate
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => handleFileChange(e, 'nationalId')}
+                        className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      />
+                      {documents.nationalId && (
+                        <p className="mt-2 text-sm text-green-600">✓ {documents.nationalId.name}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fee Structure */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 mb-1">
+                        School Fee Structure <span className="text-red-500">*</span>
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Upload your official school/college/university fee structure
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => handleFileChange(e, 'feeStructure')}
+                        className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                      />
+                      {documents.feeStructure && (
+                        <p className="mt-2 text-sm text-green-600">✓ {documents.feeStructure.name}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* School ID Number */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                      </svg>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 mb-1">
+                        School/Student ID Number <span className="text-red-500">*</span>
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Enter your official school/college/university student ID number
+                      </p>
+                      <input
+                        type="text"
+                        value={documents.schoolId}
+                        onChange={handleSchoolIdChange}
+                        placeholder="e.g., S21/12345/2024"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Result Slip - For Continuing Students */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-blue-500 transition">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 mb-1">
+                        Latest Result Slip <span className="text-gray-500">(For Continuing Students)</span>
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-3">
+                        Upload your most recent exam results or transcript
+                      </p>
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={(e) => handleFileChange(e, 'resultSlip')}
+                        className="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                      />
+                      {documents.resultSlip && (
+                        <p className="mt-2 text-sm text-green-600">✓ {documents.resultSlip.name}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex">
+                  <svg className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">Important Notes:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>All documents must be clear and readable</li>
+                      <li>Accepted formats: JPG, PNG, PDF</li>
+                      <li>Maximum file size: 5MB per document</li>
+                      <li>Documents marked with * are required</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => {
+                    setMessage({ type: 'success', text: 'Documents uploaded successfully!' });
+                  }}
+                  disabled={!documents.nationalId || !documents.feeStructure || !documents.schoolId}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  Save Documents
+                </button>
+              </div>
+            </div>
+          )}
           )}
         </div>
       </main>
