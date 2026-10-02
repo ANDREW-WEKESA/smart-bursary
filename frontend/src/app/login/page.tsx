@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 
@@ -51,111 +50,200 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      padding: '40px 20px'
+    }}>
+      <div style={{
+        width: '480px',
+        background: 'white',
+        borderRadius: '16px',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+        overflow: 'hidden'
+      }}>
+        {/* Header */}
+        <div style={{
+          background: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)',
+          padding: '40px',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            background: 'white',
+            borderRadius: '50%',
+            margin: '0 auto 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+          }}>
+            <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="#1e40af"/>
+              <path d="M16 8L24 20H8L16 8Z" fill="white"/>
+            </svg>
+          </div>
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: '700',
+            color: 'white',
+            marginBottom: '8px'
+          }}>
+            SmartBursary
+          </h1>
+          <p style={{
+            fontSize: '16px',
+            color: 'rgba(255, 255, 255, 0.9)'
+          }}>
             Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
-              create a new account
-            </Link>
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Form */}
+        <div style={{ padding: '40px' }}>
           {error && (
-            <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div className="alert alert-error" style={{ marginBottom: '24px' }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+              </svg>
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label className="form-label">
+                Email Address
+                <span className="required">*</span>
               </label>
               <input
-                id="email"
-                name="email"
                 type="email"
-                autoComplete="email"
-                required
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="john@example.com"
+                className="form-input"
+                placeholder="john.doe@example.com"
+                required
+                autoComplete="email"
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <div className="form-group">
+              <label className="form-label">
                 Password
+                <span className="required">*</span>
               </label>
               <input
-                id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
-                required
+                name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="form-input"
                 placeholder="Enter your password"
+                required
+                autoComplete="current-password"
               />
             </div>
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '24px'
+            }}>
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '14px',
+                color: 'var(--gray-700)',
+                cursor: 'pointer'
+              }}>
+                <input
+                  type="checkbox"
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    cursor: 'pointer'
+                  }}
+                />
                 Remember me
               </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                Forgot your password?
+              <a
+                href="#"
+                style={{
+                  fontSize: '14px',
+                  color: 'var(--primary-blue)',
+                  textDecoration: 'none',
+                  fontWeight: '500'
+                }}
+              >
+                Forgot password?
               </a>
             </div>
-          </div>
 
-          <div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '14px' }}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? (
+                <>
+                  <div className="spinner" style={{ width: '20px', height: '20px', borderWidth: '2px' }}></div>
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+
+          <div style={{
+            marginTop: '32px',
+            paddingTop: '32px',
+            borderTop: '1px solid var(--gray-200)',
+            textAlign: 'center'
+          }}>
+            <p style={{
+              fontSize: '14px',
+              color: 'var(--gray-600)',
+              marginBottom: '16px'
+            }}>
+              Don't have an account?
+            </p>
+            <button
+              onClick={() => router.push('/register')}
+              className="btn btn-secondary"
+              style={{ width: '100%' }}
+            >
+              Create New Account
             </button>
           </div>
-        </form>
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+          {/* Demo Credentials */}
+          <div style={{
+            marginTop: '24px',
+            padding: '16px',
+            background: 'var(--gray-50)',
+            borderRadius: '8px',
+            fontSize: '13px'
+          }}>
+            <p style={{
+              fontWeight: '600',
+              color: 'var(--gray-700)',
+              marginBottom: '8px'
+            }}>
+              Demo Credentials:
+            </p>
+            <div style={{ color: 'var(--gray-600)', lineHeight: '1.6' }}>
+              <strong>Applicant:</strong> john.doe@student.com / student123<br/>
+              <strong>Admin:</strong> admin@smartbursary.com / admin123
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">New to SmartBursary?</span>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <Link
-              href="/register"
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-            >
-              Create new account
-            </Link>
           </div>
         </div>
       </div>

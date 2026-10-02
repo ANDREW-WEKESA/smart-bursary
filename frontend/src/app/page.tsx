@@ -1,102 +1,302 @@
-import Link from 'next/link';
+'use client';
 
-export default function Home() {
+import { useRouter } from 'next/navigation';
+
+export default function HomePage() {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Welcome to SmartBursary
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    }}>
+      {/* Navigation */}
+      <nav style={{
+        background: 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.2)'
+      }}>
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 40px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '70px'
+        }}>
+          <div style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="white"/>
+              <path d="M16 8L24 20H8L16 8Z" fill="#1e40af"/>
+            </svg>
+            SmartBursary
+          </div>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                padding: '10px 24px',
+                fontSize: '15px',
+                fontWeight: '600',
+                color: 'white',
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
+              onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => router.push('/register')}
+              style={{
+                padding: '10px 24px',
+                fontSize: '15px',
+                fontWeight: '600',
+                color: '#1e40af',
+                background: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+              }}
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '120px 40px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          maxWidth: '800px',
+          margin: '0 auto'
+        }}>
+          <h1 style={{
+            fontSize: '56px',
+            fontWeight: '800',
+            color: 'white',
+            marginBottom: '24px',
+            lineHeight: '1.2'
+          }}>
+            Smart Bursary Management System
           </h1>
-          <p className="text-xl text-gray-600 mb-12">
-            Intelligent Bursary Application, Verification & Tracking System
+          <p style={{
+            fontSize: '20px',
+            color: 'rgba(255, 255, 255, 0.9)',
+            marginBottom: '48px',
+            lineHeight: '1.6'
+          }}>
+            A comprehensive digital platform for managing bursary applications, awards, and disbursements. 
+            Streamline your scholarship process with intelligent tools and automated workflows.
           </p>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <button
+              onClick={() => router.push('/register')}
+              style={{
+                padding: '16px 40px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1e40af',
+                background: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.2)';
+              }}
+            >
+              Apply for Bursary
+            </button>
+            <button
+              onClick={() => router.push('/login')}
+              style={{
+                padding: '16px 40px',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: 'white',
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+              }}
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-16">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="text-4xl mb-4">📝</div>
-              <h2 className="text-2xl font-semibold mb-4">For Applicants</h2>
-              <p className="text-gray-600 mb-6">
-                Submit bursary applications online, upload documents, and track your application status in real-time.
-              </p>
-              <Link
-                href="/register"
-                className="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
-              >
-                Apply Now
-              </Link>
+        {/* Features Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '32px',
+          marginTop: '120px'
+        }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            padding: '40px',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              background: 'white',
+              borderRadius: '16px',
+              margin: '0 auto 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e40af" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
             </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="text-4xl mb-4">🔍</div>
-              <h2 className="text-2xl font-semibold mb-4">For Administrators</h2>
-              <p className="text-gray-600 mb-6">
-                Manage applications efficiently with AI-assisted verification, duplicate detection, and comprehensive reporting.
-              </p>
-              <Link
-                href="/login"
-                className="inline-block bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition"
-              >
-                Admin Login
-              </Link>
-            </div>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '12px'
+            }}>
+              Easy Application
+            </h3>
+            <p style={{
+              fontSize: '15px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              lineHeight: '1.6'
+            }}>
+              Simple and intuitive application process. Complete your profile and apply in minutes.
+            </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h3 className="text-2xl font-semibold mb-6">Key Features</h3>
-            <div className="grid md:grid-cols-3 gap-6 text-left">
-              <div>
-                <div className="text-2xl mb-2">✅</div>
-                <h4 className="font-semibold mb-2">Easy Application</h4>
-                <p className="text-sm text-gray-600">
-                  Simple online forms with step-by-step guidance
-                </p>
-              </div>
-              <div>
-                <div className="text-2xl mb-2">🤖</div>
-                <h4 className="font-semibold mb-2">AI-Assisted</h4>
-                <p className="text-sm text-gray-600">
-                  Intelligent verification and duplicate detection
-                </p>
-              </div>
-              <div>
-                <div className="text-2xl mb-2">📊</div>
-                <h4 className="font-semibold mb-2">Real-time Tracking</h4>
-                <p className="text-sm text-gray-600">
-                  Monitor your application status at every step
-                </p>
-              </div>
-              <div>
-                <div className="text-2xl mb-2">🔒</div>
-                <h4 className="font-semibold mb-2">Secure & Private</h4>
-                <p className="text-sm text-gray-600">
-                  Your data is encrypted and protected
-                </p>
-              </div>
-              <div>
-                <div className="text-2xl mb-2">📱</div>
-                <h4 className="font-semibold mb-2">Mobile Friendly</h4>
-                <p className="text-sm text-gray-600">
-                  Apply from any device, anywhere
-                </p>
-              </div>
-              <div>
-                <div className="text-2xl mb-2">🔔</div>
-                <h4 className="font-semibold mb-2">Notifications</h4>
-                <p className="text-sm text-gray-600">
-                  Get updates via email and in-app alerts
-                </p>
-              </div>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            padding: '40px',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              background: 'white',
+              borderRadius: '16px',
+              margin: '0 auto 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e40af" strokeWidth="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
+              </svg>
             </div>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '12px'
+            }}>
+              Track Progress
+            </h3>
+            <p style={{
+              fontSize: '15px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              lineHeight: '1.6'
+            }}>
+              Real-time tracking of your application status. Get notified at every stage.
+            </p>
+          </div>
+
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(10px)',
+            padding: '40px',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              background: 'white',
+              borderRadius: '16px',
+              margin: '0 auto 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1e40af" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '12px'
+            }}>
+              Secure & Private
+            </h3>
+            <p style={{
+              fontSize: '15px',
+              color: 'rgba(255, 255, 255, 0.8)',
+              lineHeight: '1.6'
+            }}>
+              Your data is protected with industry-standard security measures.
+            </p>
           </div>
         </div>
       </div>
-
-      <footer className="bg-gray-800 text-white py-8 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <p>&copy; 2024 SmartBursary. Academic Group Project.</p>
-        </div>
-      </footer>
     </div>
   );
 }
