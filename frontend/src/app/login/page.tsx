@@ -10,6 +10,8 @@ export default function LoginPage() {
     email: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -46,73 +48,169 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-center" style={{ minHeight: '100vh', background: '#f5f5f5' }}>
-      <div className="card" style={{ width: '450px', maxWidth: '90%' }}>
-        <div className="card-header text-center">
-          <h1 className="card-title" style={{ fontSize: '28px', marginBottom: '10px' }}>SmartBursary</h1>
-          <p style={{ color: '#999', fontSize: '14px' }}>Sign in to your account</p>
+    <div>
+      {/* Top Header */}
+      <div className="top-header">
+        <div className="top-header-content">
+          <div className="logo-group">
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="white">
+              <rect width="50" height="50" rx="8" fill="white" fillOpacity="0.2"/>
+              <path d="M25 15L35 30H15L25 15Z" fill="white"/>
+              <text x="25" y="42" fontSize="10" fill="white" textAnchor="middle" fontWeight="bold">SB</text>
+            </svg>
+          </div>
+          <div>
+            <div className="header-title">SMARTBURSARY MANAGEMENT PORTAL</div>
+            <div className="header-subtitle">Fostering Equity In Access to Education</div>
+          </div>
         </div>
+      </div>
 
-        {error && (
-          <div className="alert alert-error">
-            {error}
+      {/* Navigation Bar */}
+      <div className="nav-bar">
+        <div className="nav-content">
+          <a href="/" className="nav-item active">
+            <span>🏠</span> Back to Main Website
+          </a>
+          <a href="/login" className="nav-item">
+            <span>👤</span> Account Login
+          </a>
+          <a href="/register" className="nav-item">
+            <span>📝</span> User Registration
+          </a>
+          <a href="#" className="nav-item">
+            <span>📖</span> Application Guide
+          </a>
+          <a href="#" className="nav-item">
+            <span>📄</span> Documents
+          </a>
+          <a href="#" className="nav-item">
+            <span>❓</span> HELP & Support
+          </a>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-container">
+        <div className="login-container">
+          <div className="login-header">
+            <div className="login-logo">
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="38" fill="#f5f5f5" stroke="#ddd" strokeWidth="2"/>
+                <path d="M40 20L55 45H25L40 20Z" fill="#7e57c2"/>
+                <text x="40" y="65" fontSize="12" fill="#333" textAnchor="middle" fontWeight="bold">SmartBursary</text>
+              </svg>
+            </div>
+            <h2 className="login-title">Sign In to your Account</h2>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="john.doe@example.com"
-              required
-            />
-          </div>
+          <div className="login-body">
+            <div className="register-link">
+              Register if you don't have an account by <a href="#" onClick={(e) => { e.preventDefault(); router.push('/register'); }}>Clicking Here &gt;&gt;</a>
+            </div>
 
-          <div className="form-group">
-            <label className="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+            <div className="info-box">
+              Login with your email or ID number and password below
+            </div>
 
-          <div className="form-group">
-            <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </div>
+            {error && (
+              <div className="alert alert-error">
+                ⚠️ {error}
+              </div>
+            )}
 
-          <div className="text-center mt-2">
-            <p style={{ fontSize: '14px', color: '#666' }}>
-              Don't have an account?{' '}
-              <button 
-                type="button"
-                onClick={() => router.push('/register')}
-                className="btn-link"
-              >
-                Register here
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <div className="input-wrapper">
+                  <span className="input-icon">👤</span>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="form-input input-with-icon"
+                    placeholder="Email or ID Number"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <div className="input-wrapper">
+                  <span className="input-icon">🔒</span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="form-input input-with-icon"
+                    style={{ paddingRight: '45px' }}
+                    placeholder="Password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div className="checkbox-group" style={{ margin: 0 }}>
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <label htmlFor="remember">Remember Me</label>
+                </div>
+                <a href="#" className="forgot-password">Forget Password?</a>
+              </div>
+
+              <button type="submit" className="btn btn-login" disabled={loading}>
+                {loading ? (
+                  <>
+                    <div className="spinner" style={{ width: '18px', height: '18px', borderWidth: '2px' }}></div>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    🔓 Login
+                  </>
+                )}
               </button>
-            </p>
-          </div>
-        </form>
 
-        <div className="mt-3" style={{ padding: '15px', background: '#f8f9fa', borderRadius: '4px', fontSize: '13px' }}>
-          <strong>Demo Accounts:</strong><br />
-          <span style={{ color: '#666' }}>
-            Applicant: john.doe@student.com / student123<br />
-            Admin: admin@smartbursary.com / admin123
-          </span>
+              <div className="divider">
+                <span>Don't Have An Account?</span>
+              </div>
+
+              <button 
+                type="button" 
+                className="btn btn-register"
+                onClick={() => router.push('/register')}
+              >
+                👤 Register
+              </button>
+            </form>
+
+            <div className="demo-box">
+              <strong>Demo Credentials:</strong>
+              <div className="demo-account">
+                <div>📧 Applicant: <strong>john.doe@student.com</strong> / <strong>student123</strong></div>
+                <div>📧 Admin: <strong>admin@smartbursary.com</strong> / <strong>admin123</strong></div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="footer">
+        <p>&copy; 2026 SmartBursary Management System. All rights reserved.</p>
       </div>
     </div>
   );
