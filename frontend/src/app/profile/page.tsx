@@ -181,7 +181,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleGuardianInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleGuardianInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setGuardianInfo(prev => ({
       ...prev,
